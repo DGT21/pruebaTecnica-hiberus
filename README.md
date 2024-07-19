@@ -63,7 +63,7 @@ La aplicacion esta configurada para que se use en el puerto 8081 y usa una base 
   mvn spring-boot:run
  	
  ````
-  **USANDO MAVEN**
+  **USANDO GRADLE**
     
   ```
   ./gradlew clean build
