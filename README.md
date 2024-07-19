@@ -90,9 +90,6 @@ Siguiendo estos pasos la aplicación empezara en http://localhost:8081
 ### Get All Contactos
 * URL:'/contactos'
 * Metodo: 'GET'
-### Obtener contacto por ID
-* URL: `/contactos/{id}`
-* Metodo: 'GET'
 ### Actualizar Contacto
 * URL: `/contactos/{id}`
 * Metodo: 'PUT'
