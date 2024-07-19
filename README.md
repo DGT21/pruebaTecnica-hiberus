@@ -23,13 +23,13 @@ Este proyecto es un simple Spring Boot REST API para manegar contactos. Incluye 
 
 Para obtener una copia del proyecto ejecutandose en local, debes de seguir estos pasos.
 
-  ## Clona el repositorio
+  ### Clona el repositorio
     Para clonar el repositorio debes copiar este codigo:
     
      git clone https://github.com/DGT21/pruebaTecnica-hiberus.git  cd contact-api
 
 
-  ## Configuración
+  ### Configuración
 
     La aplicacion esta configurada para que se use en el puerto 8081 y usa una base dedatos en      memoria H2. Puedes modificar la configuración en el archivo 'application.properties.
 
@@ -53,19 +53,22 @@ Para obtener una copia del proyecto ejecutandose en local, debes de seguir estos
     spring.jpa.hibernate.ddl-auto=update
 
 
-  ## Construyendo y ejecutando
+  ### Construyendo y ejecutando
     Dependiendo de la plataforma que usemos (Maven o Gradle) deberemos introducir los               siguientes comandos para ejecutar la aplicación:
 
-    USANDO MAVEN
-
+    **USANDO MAVEN**
+     ```
+     
       mvn clean install
       mvn spring-boot:run
-
-    USANDO GRADLE
-
+ 	   ```
+     
+    **USANDO GRADLE**
+     ```
+     
       ./gradlew clean build
       ./gradlew bootRun
-
+     ```
       
     Siguiendo estos pasos la aplicación empezara en http://localhost:8081
 
