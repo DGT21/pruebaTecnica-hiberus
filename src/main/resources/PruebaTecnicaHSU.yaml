@@ -1,0 +1,391 @@
+openapi: "3.0.0"
+info:
+  title: Agenda de contactos
+  description: |
+    ----
+    Api para la gestión de contactos
+    ----
+  contact:
+    name: Joan Manuel Aranda
+    email: jmaranda@hiberus.com
+  version: v1.2
+servers:
+  - url: https://localhost/agenda
+    description: Url de la API
+security:
+  - default: []
+tags:
+  - name:  contactos (modificacion)
+    description: >-
+      Agrupa las operaciones de creación, modificación y borrado de contactos
+paths:
+  /contactos:
+    get:
+      tags:
+        - contactos (modificacion)
+      summary: Obtiene un listado de contactos
+      description: listado de contactos
+      parameters:
+        - $ref: '#/components/parameters/order_query_param'
+      responses:
+        '206':
+          description: Listado de contactos paginado
+          content:
+            application/json:
+              schema:
+                properties:
+                  contactos:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/contacto'
+                  total_elementos:  
+                    type: integer
+                    description: total de contactos
+                    example: 10
+                  paginas_totales: 
+                    type: integer
+                    description: paginas
+                    example: 2 
+                  elementos_pagina:
+                    type: integer
+                    description: elementos por pagina
+                    example: 5 
+                  pagina_actual: 
+                    type: integer
+                    description: pagina actual
+                    example: 1
+              examples:
+                Ejemplo 1:
+                  $ref: '#/components/examples/contactos_response_example'
+        '400':
+          $ref: '#/components/responses/standard_bad_request_response'
+        '401':
+          $ref: '#/components/responses/standard_unauthorized_response'
+        '403':
+          $ref: '#/components/responses/standard_forbidden_response'
+        '429':
+          $ref: '#/components/responses/standard_too_many_requests_response'
+        default:
+          $ref: '#/components/responses/standard_server_error_response'
+      security:
+        - default: []
+      x-throttling-tier: Unlimited
+      x-auth-type: Application & Application User
+  #
+    post:
+      tags:
+        - contactos (modificacion)
+      summary: Crea un nuevo contacto evitando repetidos
+      description: Creación de un contacto
+      parameters:
+        - $ref: '#/components/parameters/standard_id_header_param'
+      requestBody:
+        $ref: '#/components/requestBodies/post_contacto_body_param'
+      responses:
+        '201':
+          description: Contacto creado correctamente
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    $ref: '#/components/schemas/contacto'
+              examples:
+                Ejemplo 1:
+                  $ref: '#/components/examples/contacto_response_example'    
+        '400':
+          $ref: '#/components/responses/standard_bad_request_response'
+        '401':
+          $ref: '#/components/responses/standard_unauthorized_response'
+        '403':
+          $ref: '#/components/responses/standard_forbidden_response'
+        '404':
+          $ref: '#/components/responses/standard_notfound_response'
+        '409':
+          $ref: '#/components/responses/standard_repeat_response'
+        '429':
+          $ref: '#/components/responses/standard_too_many_requests_response'
+        default:
+          $ref: '#/components/responses/standard_server_error_response'
+      security:
+        - default: []
+      x-throttling-tier: Unlimited
+      x-auth-type: Application & Application User
+  #
+    put:
+      tags:
+        - contactos (modificacion)
+      summary: Actualización de los datos de un contacto
+      description: Modifica un contacto
+      parameters:
+        - $ref: '#/components/parameters/standard_id_header_param'
+      requestBody:
+        $ref: '#/components/requestBodies/post_contacto_body_param'
+      responses:
+        '201':
+          description: Contacto actualizado correctamente
+          content:
+            application/json:
+              schema:
+                properties:
+                  contacto:
+                    $ref: '#/components/schemas/contacto'
+              examples:
+                Ejemplo 1:
+                  $ref: '#/components/examples/contacto_response_example'
+        '400':
+          $ref: '#/components/responses/standard_bad_request_response'
+        '401':
+          $ref: '#/components/responses/standard_unauthorized_response'
+        '403':
+          $ref: '#/components/responses/standard_forbidden_response'
+        '404':
+          $ref: '#/components/responses/standard_notfound_response'
+        '429':
+          $ref: '#/components/responses/standard_too_many_requests_response'
+        default:
+          $ref: '#/components/responses/standard_server_error_response'
+      security:
+        - default: []
+      x-throttling-tier: Unlimited
+      x-auth-type: Application & Application User
+  #
+    delete:
+      tags:
+        - contactos (modificacion)
+      summary: Eliminación de un contacto de la agenda
+      description: Eliminación de un contacto
+      parameters:
+        - $ref: '#/components/parameters/standard_id_header_param'
+      responses:
+        '200':
+          $ref: '#/components/responses/contacto_response'
+        '400':
+          $ref: '#/components/responses/standard_bad_request_response'
+        '401':
+          $ref: '#/components/responses/standard_unauthorized_response'
+        '403':
+          $ref: '#/components/responses/standard_forbidden_response'
+        '404':
+          $ref: '#/components/responses/standard_notfound_response'
+        '429':
+          $ref: '#/components/responses/standard_too_many_requests_response'
+        default:
+          $ref: '#/components/responses/standard_server_error_response'
+      security:
+        - default: []
+      x-throttling-tier: Unlimited
+      x-auth-type: Application & Application User
+  #
+ ############################################################################################
+components:
+  parameters:
+    standard_id_header_param:
+        in: header
+        name: id
+        description: Cabecera indicando el id del contacto
+        schema:
+          type: string
+          maxLength: 9
+        required: true
+        examples:
+          Ejemplo 1:
+            value: 1
+    order_query_param:
+      name: orderBy
+      in: query
+      description: Indica el campo de ordenación
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
+        format: string
+        enum:
+          - 'nombre' 
+          - 'apellido'
+      example:
+        value: 'nombre'
+  ############################################################################################
+  schemas:    
+    contacto:
+      required:
+        - respuesta
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Identificador de contacto
+          example: 1
+        nombre:
+          type: string
+          description: Nombre del contacto
+          example: 1
+        apellidos:
+          type: integer
+          description: apellidos del contacto
+          example: 1
+        email:
+          type: string
+          description: direccion de correo electrónico del contacto
+          example: 1
+      description: Modelo de respuesta de contacto  
+   ############################################################################################   
+  requestBodies:
+    post_contacto_body_param:
+      description: |
+        Modelo de Certificado de Asistencia
+      content:
+        application/json:
+          schema:
+            required:
+              - nombre
+              - apellidos
+              - email
+            properties:
+              nombre:
+                type: string
+                description: Nombre del contactos
+                example: 'BENITO'
+              apellidos:
+                type: string
+                description: Apellidos del contactos
+                example: 'PEREZ GALDOS'
+              email: 
+                type: string
+                description: Email de contactos
+                example: 'bperez@hiberus.com'
+          examples:
+            Ejemplo1:
+              $ref: '#/components/examples/contacto_param_example'
+      required: true
+  ############################################################################################
+  responses:
+  #
+    standard_bad_request_response:  
+      description: Error en el formato de la peticion
+      content:
+        application/json:
+          schema:
+            properties:
+              error:
+               type: string
+               description: Error 400
+               example: 'Error en el formato de la peticion'
+  #
+    standard_unauthorized_response:
+      description: No autorizado el acceso
+      content:
+        application/json:
+          schema:
+            properties:
+              error:
+               type: string
+               description: Error 401
+               example: 'No está permitido el uso de esta petición'
+  #
+    standard_forbidden_response:
+      description: No autorizado el acceso
+      content:
+        application/json:
+          schema:
+            properties:
+              error:
+               type: string
+               description: Error 403
+               example: 'No está autorizado'
+  #
+    standard_notfound_response:
+      description: Elemento no encontrado
+      content:
+        application/json:
+          schema:
+            properties:
+              error:
+               type: string
+               description: Error 404
+               example: 'Elemento no encontrado'
+  #
+    standard_repeat_response:
+      description: El contacto ya existe
+      content:
+        application/json:
+          schema:
+            properties:
+              error:
+               type: string
+               description: Error 409
+               example: 'El contacto ya existe'
+  #
+    standard_too_many_requests_response:
+      description: Se han obtenido demasiados resultados
+      content:
+        application/json:
+          schema:
+            properties:
+              error:
+               type: string
+               description: Error 429
+               example: 'Se han obtenido demasiados resultados'
+  #
+    standard_server_error_response:
+      description: Error indeterminado en el servidor
+      content:
+        application/json:
+          schema:
+            properties:
+              error:
+               type: string
+               description: Error 500
+               example: 'Error indeterminado en el servidor'
+  #
+    contacto_response:
+      description: Expediente obtenido correctamente
+      content:
+        application/json:
+          schema:
+            properties:
+              data:
+                $ref: '#/components/schemas/contacto'
+          examples:
+            Ejemplo 1:
+              $ref: '#/components/examples/contacto_response_example'
+   ############################################################################################
+  examples:
+  #
+    contacto_param_example:
+      value:
+        nombre: BENITO
+        apellidos: PEREZ GALDOS
+        email: bperez@hiberus.com
+  #      
+    contacto_response_example:
+      value:
+        id: 00001
+        nombre: BENITO
+        apellidos: PEREZ GALDOS
+        email: bperez@hiberus.com
+  #
+    contactos_response_example:
+      value:
+        contactos: 
+          [
+            {
+              id: 1,
+              nombre: 'BENITO',
+              apellidos: 'PEREZ GALDOS',
+              email: 'bperez@hiberus.com'
+            },
+            {
+              id: 2,
+              nombre: 'GABRIEL',
+              apellidos: 'GARCIA MARQUEZ',
+              email: 'ggarcia@hiberus.com'
+            }
+          ]
+        total_elementos: 2
+        paginas_totales: 1
+        elementos_pagina: 5
+        pagina_actual: 1
+
+    
