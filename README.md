@@ -91,10 +91,10 @@ Siguiendo estos pasos la aplicación empezara en http://localhost:8081
 * URL:'/contactos'
 * Metodo: 'GET'
 ### Obtener contacto por ID
-* URL: '/contactos/{id}'
+* URL: `/contactos/{id}`
 * Metodo: 'GET'
 ### Actualizar Contacto
-* URL: '/contactos/{id}
+* URL: `/contactos/{id}`
 * Metodo: 'PUT'
 * Request Body:
 ```
@@ -105,7 +105,7 @@ Siguiendo estos pasos la aplicación empezara en http://localhost:8081
 }
 ```
 ### Borrar un contacto
-* URL: '/contactos/{id}
+* URL: `/contactos/{id}`
 * Metodo: 'DELETE'
 ## Testeos
 Puedes  ejecutar los tests usando tanto Maven como Gradle
