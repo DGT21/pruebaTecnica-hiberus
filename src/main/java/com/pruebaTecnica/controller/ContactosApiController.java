@@ -1,10 +1,10 @@
 package com.pruebaTecnica.controller;
 
-import java.util.List;
-
 import org.openapitools.api.ContactosApi;
 import org.openapitools.model.Contacto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,36 +17,45 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.pruebaTecnica.dto.ContactoResponse;
 import com.pruebaTecnica.service.ContactoService;
 
 @RestController
 @RequestMapping("/contactos")
 public class ContactosApiController implements ContactosApi {
-    
-	 @Autowired
-	    private ContactoService contactoService;
 
-	    @GetMapping
-	    public ResponseEntity<List<Contacto>> getContactos(@RequestParam(value = "orderBy", required = false) String orderBy) {
-	        List<Contacto> contactos = contactoService.getAllContactos(orderBy);
-	        return ResponseEntity.ok(contactos);
-	    }
+	@Autowired
+	private ContactoService contactoService;
 
-	    @PostMapping
-	    public ResponseEntity<Contacto> createContacto(@RequestBody Contacto contacto) {
-	        Contacto created = contactoService.createContacto(contacto);
-	        return ResponseEntity.status(HttpStatus.CREATED).body(created);
-	    }
+	@GetMapping
+	public ResponseEntity<ContactoResponse> getContactos(@RequestParam(defaultValue = "0") int paginaActual,
+			@RequestParam(defaultValue = "5") int size,
+			@RequestParam(value = "orderBy", required = false) String orderBy) {
+		Page<Contacto> contactos = contactoService.getContactos(paginaActual, size, orderBy);
+		ContactoResponse response = new ContactoResponse();
+		response.setContactos(contactos.getContent());
+		response.setTotalElementos((int) contactos.getTotalElements());
+		response.setPaginasTotales(contactos.getTotalPages());
+		response.setElementosPagina(contactos.getSize());
+		response.setPaginaActual(contactos.getNumber() + 1);
+		return ResponseEntity.ok(response);
+	}
 
-	    @PutMapping("/{id}")
-	    public ResponseEntity<Contacto> updateContacto(@PathVariable Integer id, @RequestBody Contacto contacto) {
-	        Contacto updated = contactoService.updateContacto(id, contacto);
-	        return ResponseEntity.ok(updated);
-	    }
+	@PostMapping
+	public ResponseEntity<Contacto> createContacto(@RequestBody Contacto contacto) {
+		Contacto created = contactoService.createContacto(contacto);
+		return ResponseEntity.status(HttpStatus.CREATED).body(created);
+	}
 
-	    @DeleteMapping("/{id}")
-	    public ResponseEntity<Void> deleteContacto(@PathVariable Integer id) {
-	        contactoService.deleteContacto(id);
-	        return ResponseEntity.noContent().build();
-	    }
+	@PutMapping("/{id}")
+	public ResponseEntity<Contacto> updateContacto(@PathVariable Integer id, @RequestBody Contacto contacto) {
+		Contacto updated = contactoService.updateContacto(id, contacto);
+		return ResponseEntity.ok(updated);
+	}
+
+	@DeleteMapping("/{id}")
+	public ResponseEntity<Void> deleteContacto(@PathVariable Integer id) {
+		contactoService.deleteContacto(id);
+		return ResponseEntity.noContent().build();
+	}
 }

@@ -1,9 +1,10 @@
 package com.pruebaTecnica.service;
 
-import java.util.List;
-
 import org.openapitools.model.Contacto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -16,13 +17,26 @@ public class ContactoService {
 	@Autowired
 	private ContactoRepository contactoRepository;
 
-    public List<Contacto> getAllContactos(String orderBy) {
-        if ("nombre".equalsIgnoreCase(orderBy)) {
-            return contactoRepository.findAll(Sort.by(Sort.Direction.ASC, "nombre"));
-        } else if ("apellidos".equalsIgnoreCase(orderBy)) {
-            return contactoRepository.findAll(Sort.by(Sort.Direction.ASC, "apellidos"));
+    public Page<Contacto> getContactos(int paginaActual, int size, String orderBy) {
+    	
+    	 // Define default sort if no valid orderBy is provided
+        Sort sort = Sort.by(Sort.Order.asc("nombre")).and(Sort.by(Sort.Order.asc("apellidos")));
+
+        // Parse the orderBy parameter and apply sorting
+        if (orderBy != null && !orderBy.isEmpty()) {
+            String[] sortParams = orderBy.split(",");
+            for (String param : sortParams) {
+                String[] sortOrder = param.trim().split(" ");
+                if (sortOrder.length == 2) {
+                    sort = sort.and(Sort.by(new Sort.Order(Sort.Direction.fromString(sortOrder[1]), sortOrder[0])));
+                } else {
+                    sort = sort.and(Sort.by(new Sort.Order(Sort.Direction.ASC, sortOrder[0])));
+                }
+            }
         }
-        return contactoRepository.findAll();
+
+        Pageable pageable = PageRequest.of(paginaActual, size, sort);
+        return contactoRepository.findAll(pageable);
     }
 
     public Contacto createContacto(Contacto contacto) {
